@@ -19,8 +19,7 @@ anime.timeline({ loop: false })
 })
 .add({
     targets: '#animationLetters',
-    opacity: 0.5,
-    scale: [1, 0.75],
+    scale: [1, 0.6],
     duration: 900,
     easing: "easeOutExpo"
 });
