@@ -1,4 +1,15 @@
 $(function () {
+    function toggleMode() {
+        $('body').toggleClass('dark-mode-bg light-mode-bg');
+        $('.dark-mode').toggleClass('hide');
+        $('.white-mode').toggleClass('hide');
+    }
+
+    $('.dark-mode, .white-mode').on('click', toggleMode);
+
+    // Ensure initial state
+    $('body').addClass('light-mode-bg');
+
     const phrases = [
         { text: 'Hola soy ', span: 'Alex Parra', spanClass: 'bold-blue', colorClass: 'celeste' },
         { text: 'Desarrollador ', span: 'Full Stack', spanClass: 'bold-pink', colorClass: 'pink' }
