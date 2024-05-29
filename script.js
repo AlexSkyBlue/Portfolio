@@ -1,15 +1,22 @@
 $(function () {
+    // Inicializar en modo claro
+    $('body').addClass('light-mode-bg');
+    $('.scroll-container').addClass('light-shadow');
+    // Alternar el modo oscuro
+    $('.dark-mode, .white-mode').on('click', toggleMode);
+    onclick="toggleMode()"
+    // Alternar el modo oscuro - Funciones
     function toggleMode() {
         $('body').toggleClass('dark-mode-bg light-mode-bg');
         $('.dark-mode').toggleClass('hide');
         $('.white-mode').toggleClass('hide');
+        $('.scroll-container').toggleClass('dark-shadow light-shadow');
     }
 
-    $('.dark-mode, .white-mode').on('click', toggleMode);
+    //Efecto Máquina de Escribir
+    setTimeout(type, 500); // Pausa inicial antes de empezar a escribir
 
-    // Ensure initial state
-    $('body').addClass('light-mode-bg');
-
+    //Efecto Máquina de Escribir - Funciones
     const phrases = [
         { text: 'Hola soy ', span: 'Alex Parra', spanClass: 'bold-blue', colorClass: 'celeste' },
         { text: 'Desarrollador ', span: 'Full Stack', spanClass: 'bold-pink', colorClass: 'pink' }
@@ -21,7 +28,6 @@ $(function () {
     let delay = 2000;
     let currentText = '';
     let currentSpan = '';
-
     function type() {
         const fullText = phrases[currentPhraseIndex].text;
         const fullSpan = phrases[currentPhraseIndex].span;
@@ -68,6 +74,4 @@ $(function () {
             setTimeout(type, typingSpeed);
         }
     }
-
-    setTimeout(type, 500); // Pausa inicial antes de empezar a escribir
 });

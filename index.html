@@ -32,21 +32,24 @@
   </head>
   <body>
     <div class="container-fluid">
+      <!-- NavBar -->
       <div class="row align-items-center justify-content-center">
-        <div class="col-1 p-2 ms-auto text-center">
+        <div class="col-1 p-2 text-center">
           <button class="btn" onclick="window.location.href='https://github.com/AlexSkyBlue'"><i class="bi bi-github fs-3"></i></button>
         </div>
-        <div class="col-1 p-2 ms-auto text-center">
+        <div class="col-1 p-2 text-center">
           <button class="btn" onclick="window.location.href='https://www.linkedin.com/in/alex-parra-salinas/'"><i class="bi bi-linkedin fs-3"></i></button>
         </div>
-        <div class="col-1 p-2 ms-auto text-center">
+        <div class="col-1 p-2 text-center">
           <button class="btn" onclick="window.location.href='https://www.instagram.com/arekkusu_sukai/'"><i class="bi bi-instagram fs-3"></i></button>
         </div>
-        <div class="col-1 p-2 ms-auto text-center">
-          <a class="dark-mode" onclick="toggleMode()"><i class="bi bi-moon-stars fs-3"></i></a>
-          <a class="white-mode hide" onclick="toggleMode()"><i class="bi bi-sun fs-3"></i></a>
+        <div class="col-1 p-2 text-center">
+          <a class="dark-mode btn"><i class="bi bi-moon-stars fs-3"></i></a>
+          <a class="white-mode btn hide"><i class="bi bi-sun fs-3"></i></a>
         </div>
       </div>
+
+      <!-- Efecto Máquina y Foto de Perfil -->
       <div class="h-full row">
         <div class="col-7 justify-content-start align-items-center d-flex">
           <div class="container-writter-machine">
@@ -61,6 +64,42 @@
           </div>
         </div>
       </div>
+
+      <!-- Scroll Infinito de Iconos -->
+      <div class="scroll-container">
+        <div class="carousel-primary">
+          <img class="icono" src="assets/img/angular-icon.png" data-name="Angular" alt="Angular Icon" />
+          <img class="icono" src="assets/img/typescript-icon.png" data-name="TypeScript" alt="Typescript Icon" />
+          <img class="icono" src="assets/img/c-sharp-icon.png" data-name="C Sharp (C#)" alt="C# Icon" />
+          <img class="icono" src="assets/img/dot-net-icon.png" data-name=".NET" alt=".NET Icon" />
+          <img class="icono" src="assets/img/html5-icon.png" data-name="HTML5" alt="HTML5 Icon" />
+          <img class="icono" src="assets/img/css3-icon.png" data-name="CSS3" alt="CSS3 Icon" />
+          <img class="icono" src="assets/img/bootstrap-logo-icon.png" data-name="Bootstrap 5" alt="Bootstrap Icon" />
+          <img class="icono" src="assets/img/tailwind-css-icono.png" data-name="Tailwind CSS" alt="Tailwind CSS Icon" />
+          <img class="icono" src="assets/img/javascript-logo.png" data-name="JavaScript" alt="JavaScript Icon" />
+          <img class="icono" src="assets/img/jquery-icon.png" data-name="jQuery" alt="jQuery Icon" />
+          <img class="icono" src="assets/img/postman-icon.png" data-name="Postman" alt="Postman Icon" />
+          <img class="icono" src="assets/img/sqlserver-icon.png" data-name="SQL Server" alt="SQL Server Icon" />
+          <img class="icono" src="assets/img/git-icon.png" data-name="Git" alt="Git Icon" />
+        </div>
+        <div class="carousel-primary carousel-secondary">
+          <img class="icono" src="assets/img/angular-icon.png" data-name="Angular" alt="Angular Icon" />
+          <img class="icono" src="assets/img/typescript-icon.png" data-name="TypeScript" alt="Typescript Icon" />
+          <img class="icono" src="assets/img/c-sharp-icon.png" data-name="C Sharp (C#)" alt="C# Icon" />
+          <img class="icono" src="assets/img/dot-net-icon.png" data-name=".NET" alt=".NET Icon" />
+          <img class="icono" src="assets/img/html5-icon.png" data-name="HTML5" alt="HTML5 Icon" />
+          <img class="icono" src="assets/img/css3-icon.png" data-name="CSS3" alt="CSS3 Icon" />
+          <img class="icono" src="assets/img/bootstrap-logo-icon.png" data-name="Bootstrap 5" alt="Bootstrap Icon" />
+          <img class="icono" src="assets/img/tailwind-css-icono.png" data-name="Tailwind CSS" alt="Tailwind CSS Icon" />
+          <img class="icono" src="assets/img/javascript-logo.png" data-name="JavaScript" alt="JavaScript Icon" />
+          <img class="icono" src="assets/img/jquery-icon.png" data-name="jQuery" alt="jQuery Icon" />
+          <img class="icono" src="assets/img/postman-icon.png" data-name="Postman" alt="Postman Icon" />
+          <img class="icono" src="assets/img/sqlserver-icon.png" data-name="SQL Server" alt="SQL Server Icon" />
+          <img class="icono" src="assets/img/git-icon.png" data-name="Git" alt="Git Icon" />
+        </div>
+      </div>
+
+      <!-- Fondo de la pagina - Olas|Waves -->
       <svg id="waves" viewBox="0 0 1440 690" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <linearGradient id="gradient" x1="0%" y1="50%" x2="100%" y2="50%">
@@ -97,6 +136,7 @@
         </path>
       </svg>
     </div>
+  
     <script src="script.js"></script>
   </body>
 </html>
