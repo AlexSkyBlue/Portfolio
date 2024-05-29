@@ -4,7 +4,6 @@ $(function () {
     $('.scroll-container').addClass('light-shadow');
     // Alternar el modo oscuro
     $('.dark-mode, .white-mode').on('click', toggleMode);
-    onclick="toggleMode()"
     // Alternar el modo oscuro - Funciones
     function toggleMode() {
         $('body').toggleClass('dark-mode-bg light-mode-bg');
