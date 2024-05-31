@@ -7,10 +7,18 @@ body {
 }
 /* Modo claro y oscuro */
 body.light-mode-bg {
+    background-color: #f5f5f5;
+    color: black;
+}
+body.light-mode-bg .scroll-container .pop-up {
+    background-color: black;
+    color: #f5f5f5;
+}
+
+body.dark-mode-bg .scroll-container .pop-up {
     background-color: white;
     color: black;
 }
-
 body.dark-mode-bg {
     background-color: black;
     color: white;
@@ -55,7 +63,7 @@ body.dark-mode-bg .scroll-container .icono::after {
     justify-content: center;
     overflow: hidden;
     transition: border-radius 1s ease-in-out;
-    animation: borderAnimation 3s infinite paused; /* Pausar la animación por defecto */
+    animation: borderAnimation 3s infinite paused;
 }
 
 @keyframes borderAnimation {
@@ -84,29 +92,29 @@ body.dark-mode-bg .scroll-container .icono::after {
     }
 }
 .container-img:hover {
-    animation-play-state: running; /* Ejecutar la animación cuando se hace hover */
+    animation-play-state: running;
 }
 
 .container-img img {
     position: absolute;
-    top: -50px; /* Ajusta según sea necesario */
+    top: -50px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%; /* Ajusta según sea necesario */
+    width: 100%; 
 }
 
 .container-img img {
     position: absolute;
-    top: -50px; /* Ajusta según sea necesario */
+    top: -50px; 
     left: 50%;
     transform: translateX(-50%);
-    width: 100%; /* Ajusta según sea necesario */
+    width: 100%; 
 }
 .container-img img {
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 5px; /* Ajusta para controlar cuánto de la parte superior de la imagen es visible */
+    top: 5px; 
     margin: 0 auto;
     object-fit: cover;
     clip-path: inherit;
@@ -154,7 +162,7 @@ body.dark-mode-bg .scroll-container .icono::after {
     position: relative;
     overflow-x: hidden;
     z-index: 1;
-    min-height: 100vh; /* Ensure the container spans the full height */
+    min-height: 100vh;
 }
 .container-fluid::after {
     content: '';
@@ -190,7 +198,7 @@ body.dark-mode-bg .scroll-container .icono::after {
     padding-bottom: 4px;
     padding-right: 30px;
     padding-left: 30px;
-    transition: color 700ms ease-in-out;
+    transition: color 500ms ease-in-out;
     overflow: hidden;
     z-index: 1;
 }
@@ -218,61 +226,54 @@ body.dark-mode-bg .scroll-container .icono::after {
 .scroll-container {
     position: relative;
     height: 150px;
-    overflow: visible; /* Cambiado de 'hidden' a 'visible' */
+    overflow: visible;
 }
 
-.carousel-primary,
-.carousel-secondary {
+.carousel-primary {
     position: absolute;
     height: 100%;
     display: flex;
     align-items: center;
     white-space: nowrap;
-    animation: scroll-horizontal 20s linear infinite;
-    overflow: visible; /* Asegura que el overflow dentro de los carruseles sea visible */
+    animation: scroll-horizontal 30s linear infinite; /* Aumenta la duración para iconos más pequeños */
 }
 
 .carousel-secondary {
-    animation-delay: 10s;
-    transform: translateX(100%); /* Iniciar fuera del contenedor */
+    animation-delay: 15s; /* Ajusta el delay para la segunda fila */
+    transform: translateX(120%);
 }
 
-.scroll-container .icono {
+.container-icono {
     position: relative;
+}
+
+.container-icono .icono {
     overflow: visible;
     height: min-content;
-    width: 130px;
-    margin-right: 25px; /* Espacio entre los íconos */
+    width: 100px; /* Ancho ajustado */
+    margin-right: 25px;
     filter: grayscale(1);
     transition: all 500ms ease-in-out;
 }
 
-.scroll-container .icono:hover {
+.container-icono .icono:hover {
     filter: grayscale(0);
     transform: scale(1.2);
-    z-index: 10; /* Asegura que el ícono agrandado esté encima de otros elementos */
+    z-index: 10;
 }
 
-.scroll-container .icono::after {
-    content: attr(data-name);
+.container-icono .pop-up {
     position: absolute;
-    bottom: 110%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: white;
-    color: black;
     padding: 5px 10px;
     border-radius: 5px;
     white-space: nowrap;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: all 0.3s ease-in-out;
     pointer-events: none; /* Para evitar que la burbuja interfiera con el hover */
     z-index: 20;
-}
-
-.scroll-container .icono:hover::after {
-    opacity: 1;
+    bottom: -50%; /* Ajusta la posición vertical */
+    left: 40%;
+    transform: translateX(-50%);
 }
 
 @keyframes scroll-horizontal {
@@ -296,9 +297,9 @@ body.dark-mode-bg .scroll-container .icono::after {
     content: '';
     position: absolute;
     top: -15%;
-    height: 125%;
+    height: 140%;
     width: 150px;
-    z-index: 3; /* Asegura que el difuminado esté por encima de los carruseles */
+    z-index: 3; 
     pointer-events: none;
     box-shadow: inset 150px 0 50px -50px rgba(255, 255, 255, 1);
 }
