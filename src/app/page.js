@@ -1,7 +1,4 @@
-import Image from "next/image";
-import Hyperspeed from '@/reactbits/Backgrounds/Hyperspeed/Hyperspeed';
-import BlurText from "@/reactbits/TextAnimations/BlurText/BlurText";
-import PageClient from "./pageClient";
+import HomeClient from "./homeClient";
 
 export const metadata = {
   title: "AlexSkyBlue - Ingeniero Informático & Front End Developer",
@@ -37,5 +34,5 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <PageClient />;
+  return <HomeClient />;
 }
