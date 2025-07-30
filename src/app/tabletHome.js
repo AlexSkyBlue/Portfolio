@@ -12,7 +12,8 @@ const dockApps = [
 export default function TabletHome() {
   const [hora, setHora] = useState('--:--:--');
   const [zona, setZona] = useState('');
-  const [clima, setClima] = useState({ temp: null, desc: '', ciudad: '' });
+  const [clima, setClima] = useState({ temp: null, desc: '', ciudad: '', weatherCode: null });
+
   const [loadingClima, setLoadingClima] = useState(true);
 
   // Hora y zona en tiempo real
@@ -33,36 +34,67 @@ export default function TabletHome() {
       setLoadingClima(false);
       return;
     }
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      try {
-        // Ciudad
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}&language=es`);
-        const geoData = await geoRes.json();
-        const ciudad = geoData?.results?.[0]?.name || "Tu zona";
 
-        // Clima
-        const meteoRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`);
-        const meteoData = await meteoRes.json();
-        const temp = Math.round(meteoData?.current_weather?.temperature ?? 0);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          // === Obtener ciudad ===
+          const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=es`
+          );
+          const geoData = await geoRes.json();
+          const ciudad = geoData.address?.city || geoData.address?.town || geoData.address?.village || geoData.address?.state || geoData.address?.county || "";
 
-        let desc = "Clima desconocido";
-        switch(meteoData?.current_weather?.weathercode) {
-          case 0: desc = "Despejado"; break;
-          case 1: case 2: case 3: desc = "Parcialmente nublado"; break;
-          case 45: case 48: desc = "Neblina"; break;
-          case 51: case 53: case 55: desc = "Llovizna"; break;
-          case 61: case 63: case 65: desc = "Lluvia"; break;
-          case 71: case 73: case 75: desc = "Nieve"; break;
-          case 80: case 81: case 82: desc = "Chubascos"; break;
-          default: desc = "Clima variable";
+          // === Obtener clima actual ===
+          const meteoRes = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`
+          );
+          const meteoData = await meteoRes.json();
+          const temp = Math.round(meteoData?.current_weather?.temperature ?? 0);
+          const weatherCode = meteoData?.current_weather?.weathercode ?? null;
+
+          let desc = "Clima desconocido";
+          switch (weatherCode) {
+            case 0: desc = "Despejado"; break;
+            case 1:
+            case 2:
+            case 3: desc = "Parcialmente nublado"; break;
+            case 45:
+            case 48: desc = "Neblina"; break;
+            case 51:
+            case 53:
+            case 55: desc = "Llovizna"; break;
+            case 61:
+            case 63:
+            case 65: desc = "Lluvia"; break;
+            case 71:
+            case 73:
+            case 75: desc = "Nieve"; break;
+            case 80:
+            case 81:
+            case 82: desc = "Chubascos"; break;
+            default: desc = "Clima variable";
+          }
+
+          setClima({ temp, desc, ciudad, weatherCode });
+        } catch (err) {
+          setClima({ temp: null, desc: "No disponible", ciudad: "", weatherCode: null });
         }
-        setClima({ temp, desc, ciudad });
-      } catch {
-        setClima({ temp: null, desc: "No disponible", ciudad: "" });
+
+        setLoadingClima(false);
+      },
+      (error) => {
+        setLoadingClima(false);
+        setClima({ temp: null, desc: "No disponible", ciudad: "", weatherCode: null });
+        console.error('Error en geolocalización:', error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 8000,
+        maximumAge: 0,
       }
-      setLoadingClima(false);
-    }, () => setLoadingClima(false), { enableHighAccuracy: true });
+    );
   }, []);
 
   // Copia mail
@@ -88,8 +120,33 @@ export default function TabletHome() {
         { icon: <Icon icon="logos:chrome" width={38} color="#4285F4" />, name: 'Web', url: 'https://alexskyblue.cl' },
     ];
 
+  function getClimaIcon(weatherCode) {
+    switch (weatherCode) {
+      case 0: return <Icon icon="wi:day-sunny" width={38} color="#f7b801" />; // Despejado
+      case 1:
+      case 2:
+      case 3: return <Icon icon="wi:day-cloudy" width={150} color="#7ecfff" />; // Parcialmente nublado
+      case 45:
+      case 48: return <Icon icon="wi:fog" width={38} color="#bdbdbd" />; // Neblina
+      case 51:
+      case 53:
+      case 55: return <Icon icon="wi:sprinkle" width={38} color="#76bfff" />; // Llovizna
+      case 61:
+      case 63:
+      case 65: return <Icon icon="wi:rain" width={38} color="#539edb" />; // Lluvia
+      case 71:
+      case 73:
+      case 75: return <Icon icon="wi:snow" width={38} color="#b3e5fc" />; // Nieve
+      case 80:
+      case 81:
+      case 82: return <Icon icon="wi:showers" width={38} color="#65a4e0" />; // Chubascos
+      default: return <Icon icon="wi:cloud" width={38} color="#bdbdbd" />;
+    }
+  }
+
+
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-tr from-orange-300 via-purple-300 to-blue-400 flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative min-h-screen w-full bg-gradient-to-tr from-orange-300 via-purple-300 to-blue-400 flex flex-col items-center justify-top overflow-hidden">
 
       {/* Barra de estado */}
       <div className="absolute top-0 left-0 w-full px-8 py-2 flex justify-between items-center text-base text-white font-semibold z-20">
@@ -103,39 +160,56 @@ export default function TabletHome() {
         </span>
       </div>
 
-      <div className="flex flex-row gap-6 w-full max-w-6xl mx-auto mt-16 pb-28">
+      <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto mt-16 pb-28">
 
         {/* Widgets estilo iPad */}
-        <div className="flex flex-col gap-4 w-72">
+        <div className="flex flex-col gap-4 w-full self-center">
           {/* Widget hora + clima */}
-          <div className="bg-white/70 rounded-2xl p-4 shadow flex flex-col items-start min-h-[110px]">
-            <span className="text-lg font-bold text-blue-800 flex items-center gap-2">
-                <Icon icon="wi:cloud-refresh" width={38} color="#007bff" /> {clima.ciudad || "Detectando..."}
-            </span>
-
-            <span className="text-3xl font-bold text-blue-500 tracking-wide">{hora}</span>
-            <span className="text-xs text-gray-700">Zona: {zona || "Desconocida"}</span>
+          <div className="bg-white/70 rounded-2xl p-8 shadow flex flex-col items-center h-min w-full">
             {loadingClima ? (
-              <span className="text-sm text-gray-600">Cargando clima...</span>
-            ) : clima.temp !== null ? (
-              <span className="text-sm text-blue-900">{clima.temp}°C - {clima.desc}</span>
+              <div className="w-full flex flex-col items-center">
+                <Icon icon="wi:cloud-refresh" width={80} color="#007bff" />
+                <span className="text-2xl font-semibold mt-2 text-blue-700">Detectando ubicación...</span>
+              </div>
             ) : (
-              <span className="text-sm text-red-700">Clima no disponible</span>
+              <div className="w-full flex flex-row items-center">
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-lg font-bold text-gray-700 mb-2">
+                    {clima.ciudad ? clima.ciudad + ', Chile' : 'Ubicación desconocida'}
+                  </span>
+                  <div className="flex flex-row items-center">
+                    <span className="">{getClimaIcon(clima.weatherCode, 120)}</span>
+                    <span className="text-5xl font-bold text-blue-600">
+                      {clima.temp !== null ? `${clima.temp}°C` : '--'}
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold text-blue-800 whitespace-nowrap">
+                    Está <span className="capitalize">{clima.desc}</span>
+                  </span>
+                </div>
+                
+                <div className="w-full flex flex-col items-center text-center">
+                  <span className="text-4xl text-right font-bold text-gray-800">Hora Actual</span>
+                  <span className="text-7xl text-right font-normal text-gray-800 mt-2">{hora}</span>
+                </div>
+              </div>
             )}
           </div>
+
+
           {/* Widget calendario */}
-          <div className="bg-white/80 rounded-2xl p-4 shadow flex flex-col items-start">
+          {/* <div className="bg-white/80 rounded-2xl p-4 shadow flex flex-col items-start">
             <span className="text-sm text-gray-600 font-semibold">
               {new Date().toLocaleDateString('es-CL', { weekday: 'long', day: '2-digit', month: 'short' })}
             </span>
             <span className="text-xl font-bold text-pink-500">No hay eventos hoy</span>
-          </div>
+          </div> */}
           {/* Widget noticias */}
-          <div className="bg-white/70 rounded-2xl p-3 shadow flex flex-col items-start">
+          {/* <div className="bg-white/70 rounded-2xl p-3 shadow flex flex-col items-start">
             <span className="text-xs font-bold text-red-500 mb-1">Noticias</span>
             <span className="text-xs text-gray-800">• React 19 lanza nueva feature para SSR.</span>
             <span className="text-xs text-gray-800">• ¡Chile gana la copa de...!</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Grid de apps */}
