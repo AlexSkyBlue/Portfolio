@@ -1,11 +1,26 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Asegúrate de importar useEffect
 import { AnimatePresence, motion } from 'framer-motion';
 import TabletHome from './tabletHome';
 import LockScreen from './lockScreen';
 
 export default function HomeClient() {
+  // Usaremos solo esta variable para saber si está desbloqueado
   const [unlocked, setUnlocked] = useState(false);
+
+  // 1. AL CARGAR: Revisar si ya desbloqueaste antes
+  useEffect(() => {
+    const sessionUnlocked = sessionStorage.getItem("isUnlocked");
+    if (sessionUnlocked === "true") {
+      setUnlocked(true);
+    }
+  }, []);
+
+  // 2. FUNCIÓN DE DESBLOQUEO: Esta es la que faltaba definir
+  const handleUnlock = () => {
+    setUnlocked(true);
+    sessionStorage.setItem("isUnlocked", "true"); // <--- Aquí guardamos el estado
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -17,7 +32,8 @@ export default function HomeClient() {
           exit={{ opacity: 0, x: -80 }}
           transition={{ duration: 0.4 }}
         >
-          <LockScreen onUnlock={() => setUnlocked(true)} />
+          {/* 3. Pasamos la nueva función handleUnlock aquí */}
+          <LockScreen onUnlock={handleUnlock} />
         </motion.div>
       ) : (
         <motion.div
