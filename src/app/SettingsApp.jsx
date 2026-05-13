@@ -16,18 +16,33 @@ const wallpaperCollections = [
     { category: "Dorohedoro", images: ["https://images2.alphacoders.com/140/thumb-1920-1407673.png", "http://desktophut.com/images/thumb_1675712022_301005.jpg"] }
 ];
 
-export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpaper }) {
+export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpaper, cursorSettings, onUpdateCursor }) {
     const [activeTab, setActiveTab] = useState('wallpapers');
     const [volume, setVolume] = useState(50);
 
     if (!isOpen) return null;
+
+    // Lista expandida de diseños para el grid
+    const cursorStyles = [
+        { id: 'outline_dot', name: 'Anillo + Punto', icon: 'solar:target-bold' },
+        { id: 'solid_ring', name: 'Anillo Sólido', icon: 'solar:vinyl-bold' },
+        { id: 'minimal_dot', name: 'Punto Mínimo', icon: 'solar:add-circle-bold' },
+        { id: 'crosshair_plus', name: 'Mira Pro', icon: 'solar:crosshairs-bold' },
+    ];
+
+    // Tipos de rastros bonitos
+    const trailTypes = [
+        { id: 'none', name: 'Sin Rastro' },
+        { id: 'classic', name: 'Estela Elástica' },
+        { id: 'particles', name: 'Sistema de Partículas (Bonito)' },
+    ];
 
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="absolute inset-0 z-[60] bg-black/40 backdrop-blur-md flex items-center justify-center p-6"
+            className="absolute inset-0 z-[60] bg-black/40 backdrop-blur-md flex items-center justify-center p-6 cursor-auto"
             onClick={onClose}
         >
             <div
@@ -39,15 +54,22 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                     <div className="px-4 py-6">
                         <h2 className="text-2xl font-bold text-gray-800">Ajustes</h2>
                     </div>
-                    <nav className="flex flex-col gap-2">
+                    <nav className="flex flex-col gap-2 overflow-y-auto custom-scrollbar">
+                        {/* General */}
                         <button onClick={() => setActiveTab('general')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'general' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
                             <Icon icon="solar:settings-bold" width={24} /> General
                         </button>
+                        {/* Fondos */}
                         <button onClick={() => setActiveTab('wallpapers')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'wallpapers' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
-                            <Icon icon="solar:gallery-bold" width={24} /> Fondos de Pantalla
+                            <Icon icon="solar:gallery-bold" width={24} /> Fondos
                         </button>
+                        {/* Cursor Custom (EXPANDIDO) */}
+                        <button onClick={() => setActiveTab('cursor')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'cursor' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
+                            <Icon icon="solar:mouse-circle-bold" width={24} /> Cursor Custom
+                        </button>
+                        {/* Sonido */}
                         <button onClick={() => setActiveTab('sound')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'sound' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
-                            <Icon icon="solar:volume-up-bold" width={24} /> Sonido
+                            <Icon icon="solar:volume-loud-bold-duotone" width={24} /> Sonido
                         </button>
                     </nav>
                     <div className="mt-auto px-4 pb-4">
@@ -59,16 +81,13 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
 
                 {/* CONTENIDO PRINCIPAL */}
                 <div className="w-3/4 flex flex-col bg-white overflow-hidden">
-
-                    {/* TAB: FONDOS DE PANTALLA */}
+                    {/* TAB: FONDOS */}
                     {activeTab === 'wallpapers' && (
                         <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
                             <h3 className="text-3xl font-bold text-gray-800 mb-8">Elige un Fondo</h3>
-
-                            <button onClick={() => onSelectWallpaper(null)} className="mb-10 flex items-center gap-3 bg-gradient-to-r from-orange-400 to-blue-500 p-4 rounded-2xl text-white font-bold hover:scale-[1.02] transition-transform shadow-lg">
+                            <button onClick={() => onSelectWallpaper(null)} className="mb-10 flex items-center gap-3 bg-gradient-to-r from-orange-400 to-blue-500 p-4 rounded-2xl text-white font-bold hover:scale-[1.02] transition-transform shadow-lg cursor-pointer">
                                 <Icon icon="solar:refresh-circle-bold" width={28} /> Restaurar Fondo Clásico
                             </button>
-
                             {wallpaperCollections.map((col, index) => (
                                 <div key={index} className="mb-10">
                                     <h4 className="text-xl font-semibold text-gray-700 mb-4">{col.category}</h4>
@@ -86,6 +105,76 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    )}
+
+                    {/* TAB: CURSOR CUSTOM (EXPANDIDO) */}
+                    {activeTab === 'cursor' && (
+                        <div className="flex-1 p-10 overflow-y-auto custom-scrollbar">
+                            <h3 className="text-3xl font-bold text-gray-800 mb-8 tracking-tight">Personalizar Cursor</h3>
+
+                            <div className="space-y-10 max-w-2xl">
+                                {/* Estilo Base (El Grid Bonito) */}
+                                <div>
+                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Diseño del Puntero</h4>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {cursorStyles.map(style => (
+                                            <button
+                                                key={style.id}
+                                                onClick={() => onUpdateCursor({ ...cursorSettings, style: style.id })}
+                                                className={`p-5 rounded-2xl border-2 capitalize flex flex-row items-center gap-4 cursor-pointer transition-all ${cursorSettings.style === style.id ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-inner' : 'border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-gray-200'}`}
+                                            >
+                                                <div className={`p-3 rounded-full ${cursorSettings.style === style.id ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                                                    <Icon icon={style.icon} width={28} className={cursorSettings.style === style.id ? 'text-blue-600' : 'text-gray-500'} />
+                                                </div>
+                                                <span className="font-bold text-lg">{style.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Tipo de Rastro (Select Bonito) */}
+                                <div>
+                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Efecto de Rastro y Seguimiento</h4>
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-6">
+                                        <div className="flex items-center gap-3">
+                                            <Icon icon="solar:graph-up-bold-duotone" width={32} className="text-blue-500" />
+                                            <div>
+                                                <p className="font-bold text-gray-800 text-lg">Tipo de Estela</p>
+                                                <p className="text-gray-500 text-sm">Cambia la física y forma del rastro.</p>
+                                            </div>
+                                        </div>
+                                        {/* Select nativo pero con clases Tailwind para iPad */}
+                                        <select
+                                            value={cursorSettings.trailType}
+                                            onChange={(e) => onUpdateCursor({ ...cursorSettings, trailType: e.target.value })}
+                                            className="bg-white border border-gray-200 rounded-full px-5 py-3 text-lg font-semibold text-gray-800 cursor-pointer shadow-md focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition-all outline-none"
+                                        >
+                                            {trailTypes.map(trail => (
+                                                <option key={trail.id} value={trail.id}>{trail.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Color de Acento (Ya estaba) */}
+                                <div>
+                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Color de Acento</h4>
+                                    <div className="flex items-center gap-6 bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-sm">
+                                        <input
+                                            type="color"
+                                            value={cursorSettings.color}
+                                            onChange={(e) => onUpdateCursor({ ...cursorSettings, color: e.target.value })}
+                                            className="w-16 h-16 rounded-xl cursor-pointer border-4 border-white shadow-xl p-0 outline-none"
+                                        />
+                                        <div>
+                                            <p className="font-bold text-gray-800 text-lg">Personaliza el Color</p>
+                                            <p className="text-gray-500 text-sm">Afecta tanto al puntero como al rastro elegido.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     )}
 
@@ -115,7 +204,6 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                             </div>
                         </div>
                     )}
-
                 </div>
             </div>
         </motion.div>
