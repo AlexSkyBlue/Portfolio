@@ -16,10 +16,16 @@ export default function HomeClient() {
     }
   }, []);
 
-  // 2. FUNCIÓN DE DESBLOQUEO: Esta es la que faltaba definir
+  // 2. FUNCIÓN DE DESBLOQUEO
   const handleUnlock = () => {
     setUnlocked(true);
-    sessionStorage.setItem("isUnlocked", "true"); // <--- Aquí guardamos el estado
+    sessionStorage.setItem("isUnlocked", "true");
+  };
+
+  // 3. NUEVA FUNCIÓN DE BLOQUEO (Borra la sesión y oculta la tablet)
+  const handleLock = () => {
+    setUnlocked(false);
+    sessionStorage.removeItem("isUnlocked");
   };
 
   return (
@@ -32,7 +38,6 @@ export default function HomeClient() {
           exit={{ opacity: 0, x: -80 }}
           transition={{ duration: 0.4 }}
         >
-          {/* 3. Pasamos la nueva función handleUnlock aquí */}
           <LockScreen onUnlock={handleUnlock} />
         </motion.div>
       ) : (
@@ -43,7 +48,8 @@ export default function HomeClient() {
           exit={{ opacity: 0, x: 80 }}
           transition={{ duration: 0.5 }}
         >
-          <TabletHome />
+          {/* 4. Le pasamos la función a la tablet */}
+          <TabletHome onLock={handleLock} />
         </motion.div>
       )}
     </AnimatePresence>

@@ -17,12 +17,11 @@ const wallpaperCollections = [
 ];
 
 export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpaper, cursorSettings, onUpdateCursor }) {
-    const [activeTab, setActiveTab] = useState('wallpapers');
+    const [activeTab, setActiveTab] = useState('cursor');
     const [volume, setVolume] = useState(50);
 
     if (!isOpen) return null;
 
-    // Lista expandida de diseños para el grid
     const cursorStyles = [
         { id: 'outline_dot', name: 'Anillo + Punto', icon: 'solar:target-bold' },
         { id: 'solid_ring', name: 'Anillo Sólido', icon: 'solar:vinyl-bold' },
@@ -30,11 +29,16 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
         { id: 'crosshair_plus', name: 'Mira Pro', icon: 'solar:crosshairs-bold' },
     ];
 
-    // Tipos de rastros bonitos
+    // Cursify Categories
     const trailTypes = [
-        { id: 'none', name: 'Sin Rastro' },
-        { id: 'classic', name: 'Estela Elástica' },
-        { id: 'particles', name: 'Sistema de Partículas (Bonito)' },
+        { id: 'none', name: 'Sin Rastro', desc: 'Clásico y limpio', icon: 'solar:mouse-minimalistic-bold' },
+        { id: 'classic', name: 'Smooth Follower', desc: 'Estela elástica suave', icon: 'solar:round-transfer-horizontal-bold' },
+        { id: 'particles', name: 'Dot Particles', desc: 'Puntitos que se desvanecen', icon: 'solar:stars-bold' },
+        { id: 'fluid', name: 'Fluid Glow', desc: 'Aura fluida difuminada', icon: 'solar:waterdrop-bold' },
+        { id: 'bubble', name: 'Bubble Cursor', desc: 'Burbujas flotantes', icon: 'solar:bath-bold' },
+        { id: 'rainbow', name: 'Rainbow Trail', desc: 'Rastro multicolor RGB', icon: 'solar:palette-round-bold' },
+        { id: 'snowflake', name: 'Snowflake', desc: 'Partículas con gravedad', icon: 'solar:snowflake-bold' },
+        { id: 'ripple', name: 'Click Ripples', desc: 'Ondas al hacer clic', icon: 'solar:radar-bold' },
     ];
 
     return (
@@ -55,19 +59,15 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                         <h2 className="text-2xl font-bold text-gray-800">Ajustes</h2>
                     </div>
                     <nav className="flex flex-col gap-2 overflow-y-auto custom-scrollbar">
-                        {/* General */}
                         <button onClick={() => setActiveTab('general')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'general' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
                             <Icon icon="solar:settings-bold" width={24} /> General
                         </button>
-                        {/* Fondos */}
                         <button onClick={() => setActiveTab('wallpapers')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'wallpapers' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
                             <Icon icon="solar:gallery-bold" width={24} /> Fondos
                         </button>
-                        {/* Cursor Custom (EXPANDIDO) */}
                         <button onClick={() => setActiveTab('cursor')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'cursor' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
                             <Icon icon="solar:mouse-circle-bold" width={24} /> Cursor Custom
                         </button>
-                        {/* Sonido */}
                         <button onClick={() => setActiveTab('sound')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'sound' ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200/50'}`}>
                             <Icon icon="solar:volume-loud-bold-duotone" width={24} /> Sonido
                         </button>
@@ -81,6 +81,7 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
 
                 {/* CONTENIDO PRINCIPAL */}
                 <div className="w-3/4 flex flex-col bg-white overflow-hidden">
+
                     {/* TAB: FONDOS */}
                     {activeTab === 'wallpapers' && (
                         <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
@@ -108,69 +109,62 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                         </div>
                     )}
 
-                    {/* TAB: CURSOR CUSTOM (EXPANDIDO) */}
+                    {/* TAB: CURSOR CUSTOM (COMPLETO ESTILO CURSIFY) */}
                     {activeTab === 'cursor' && (
                         <div className="flex-1 p-10 overflow-y-auto custom-scrollbar">
-                            <h3 className="text-3xl font-bold text-gray-800 mb-8 tracking-tight">Personalizar Cursor</h3>
+                            <div className="flex justify-between items-center mb-8">
+                                <h3 className="text-3xl font-bold text-gray-800 tracking-tight">Estilos Cursify</h3>
+                                <div className="flex items-center gap-3 bg-gray-100 rounded-full px-4 py-2 border border-gray-200">
+                                    <Icon icon="solar:palette-bold" width={20} className="text-gray-500" />
+                                    <input
+                                        type="color"
+                                        value={cursorSettings.color}
+                                        onChange={(e) => onUpdateCursor({ ...cursorSettings, color: e.target.value })}
+                                        className="w-8 h-8 rounded-full cursor-pointer border-none p-0 outline-none bg-transparent"
+                                    />
+                                    <span className="font-bold text-sm text-gray-600">Color Base</span>
+                                </div>
+                            </div>
 
-                            <div className="space-y-10 max-w-2xl">
-                                {/* Estilo Base (El Grid Bonito) */}
+                            <div className="space-y-10 max-w-4xl">
+                                {/* Efectos de Seguimiento */}
                                 <div>
-                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Diseño del Puntero</h4>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {cursorStyles.map(style => (
+                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Efectos y Físicas <span className="text-xs text-blue-500 bg-blue-100 px-2 py-1 rounded-full ml-2">Canvas 60fps</span></h4>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        {trailTypes.map(trail => (
                                             <button
-                                                key={style.id}
-                                                onClick={() => onUpdateCursor({ ...cursorSettings, style: style.id })}
-                                                className={`p-5 rounded-2xl border-2 capitalize flex flex-row items-center gap-4 cursor-pointer transition-all ${cursorSettings.style === style.id ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-inner' : 'border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-gray-200'}`}
+                                                key={trail.id}
+                                                onClick={() => onUpdateCursor({ ...cursorSettings, trailType: trail.id })}
+                                                className={`p-4 rounded-2xl border-2 text-left flex flex-col gap-2 cursor-pointer transition-all ${cursorSettings.trailType === trail.id ? 'border-blue-500 bg-blue-50 shadow-inner' : 'border-gray-100 bg-white hover:bg-gray-50 hover:border-gray-200 shadow-sm'}`}
                                             >
-                                                <div className={`p-3 rounded-full ${cursorSettings.style === style.id ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                                                    <Icon icon={style.icon} width={28} className={cursorSettings.style === style.id ? 'text-blue-600' : 'text-gray-500'} />
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`p-2 rounded-lg ${cursorSettings.trailType === trail.id ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                                                        <Icon icon={trail.icon} width={20} />
+                                                    </div>
+                                                    <span className={`font-bold ${cursorSettings.trailType === trail.id ? 'text-blue-800' : 'text-gray-700'}`}>{trail.name}</span>
                                                 </div>
-                                                <span className="font-bold text-lg">{style.name}</span>
+                                                <span className="text-xs font-medium text-gray-500 ml-1">{trail.desc}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Tipo de Rastro (Select Bonito) */}
+                                {/* Punteros Fijos */}
                                 <div>
-                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Efecto de Rastro y Seguimiento</h4>
-                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between gap-6">
-                                        <div className="flex items-center gap-3">
-                                            <Icon icon="solar:graph-up-bold-duotone" width={32} className="text-blue-500" />
-                                            <div>
-                                                <p className="font-bold text-gray-800 text-lg">Tipo de Estela</p>
-                                                <p className="text-gray-500 text-sm">Cambia la física y forma del rastro.</p>
-                                            </div>
-                                        </div>
-                                        {/* Select nativo pero con clases Tailwind para iPad */}
-                                        <select
-                                            value={cursorSettings.trailType}
-                                            onChange={(e) => onUpdateCursor({ ...cursorSettings, trailType: e.target.value })}
-                                            className="bg-white border border-gray-200 rounded-full px-5 py-3 text-lg font-semibold text-gray-800 cursor-pointer shadow-md focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition-all outline-none"
-                                        >
-                                            {trailTypes.map(trail => (
-                                                <option key={trail.id} value={trail.id}>{trail.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {/* Color de Acento (Ya estaba) */}
-                                <div>
-                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Color de Acento</h4>
-                                    <div className="flex items-center gap-6 bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-sm">
-                                        <input
-                                            type="color"
-                                            value={cursorSettings.color}
-                                            onChange={(e) => onUpdateCursor({ ...cursorSettings, color: e.target.value })}
-                                            className="w-16 h-16 rounded-xl cursor-pointer border-4 border-white shadow-xl p-0 outline-none"
-                                        />
-                                        <div>
-                                            <p className="font-bold text-gray-800 text-lg">Personaliza el Color</p>
-                                            <p className="text-gray-500 text-sm">Afecta tanto al puntero como al rastro elegido.</p>
-                                        </div>
+                                    <h4 className="text-lg font-bold text-gray-800 mb-4 ml-1">Forma del Puntero Base</h4>
+                                    <div className="grid grid-cols-4 gap-4">
+                                        {cursorStyles.map(style => (
+                                            <button
+                                                key={style.id}
+                                                onClick={() => onUpdateCursor({ ...cursorSettings, style: style.id })}
+                                                className={`p-4 rounded-xl border-2 capitalize flex flex-col items-center gap-3 cursor-pointer transition-all ${cursorSettings.style === style.id ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-inner' : 'border-gray-100 bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-200 shadow-sm'}`}
+                                            >
+                                                <div className={`p-3 rounded-full ${cursorSettings.style === style.id ? 'bg-blue-200' : 'bg-gray-100'}`}>
+                                                    <Icon icon={style.icon} width={24} className={cursorSettings.style === style.id ? 'text-blue-600' : 'text-gray-500'} />
+                                                </div>
+                                                <span className="font-bold text-sm text-center">{style.name}</span>
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -199,7 +193,7 @@ export default function SettingsApp({ isOpen, onClose, currentBg, onSelectWallpa
                         <div className="flex-1 p-10">
                             <h3 className="text-3xl font-bold text-gray-800 mb-8">General</h3>
                             <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-sm">
-                                <p className="text-gray-600 font-medium">Tablet OS V1.0</p>
+                                <p className="text-gray-600 font-medium">Tablet OS V2.0</p>
                                 <p className="text-gray-400 text-sm mt-2">Desarrollado por AlexSkyBlue.</p>
                             </div>
                         </div>

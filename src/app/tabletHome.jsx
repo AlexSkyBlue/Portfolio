@@ -9,11 +9,12 @@ import SpotifyWidget from './SpotifyWidget';
 import AppGrid from './AppGrid';
 import SettingsApp from './SettingsApp';
 import CalendarApp from './CalendarApp';
-import CustomCursor from './CustomCursor'; // <--- IMPORTAMOS EL CURSOR
+import CustomCursor from './CustomCursor';
 
 const dockApps = [
   { id: 'settings', icon: <Icon icon="solar:settings-bold" width={32} color="#4b5563" />, name: 'Ajustes' },
   { id: 'calendar', icon: <Icon icon="mdi:calendar" width={32} color="#c2185b" />, name: 'Calendario' },
+  { id: 'lock', icon: <Icon icon="solar:lock-keyhole-bold" width={32} color="#ef4444" />, name: 'Bloquear' }, // <--- NUEVO BOTÓN
 ];
 
 const carouselVariants = {
@@ -22,7 +23,8 @@ const carouselVariants = {
   exit: (direction) => ({ zIndex: 0, x: direction < 0 ? '100%' : '-100%', opacity: 0.5 })
 };
 
-export default function TabletHome() {
+// RECIBIMOS LA FUNCIÓN onLock
+export default function TabletHome({ onLock }) {
   const [hora, setHora] = useState('--:--:--');
   const [clima, setClima] = useState({ temp: null, desc: '', ciudad: '', weatherCode: null });
   const [loadingClima, setLoadingClima] = useState(true);
@@ -33,11 +35,10 @@ export default function TabletHome() {
   const [bgImage, setBgImage] = useState(null);
   const [openApp, setOpenApp] = useState(null);
 
-  // NUEVO ESTADO: Configuraciones del Cursor
   const [cursorSettings, setCursorSettings] = useState({
-    style: 'outline_dot', // 'outline_dot' es el Anillo + Punto
-    color: '#000000',     // Código hexadecimal para color negro
-    trailType: 'none'     // 'none' significa Sin Rastro
+    style: 'outline_dot',
+    color: '#000000',
+    trailType: 'none'
   });
 
   const paginate = (newDirection) => {
@@ -54,7 +55,6 @@ export default function TabletHome() {
     const savedBg = localStorage.getItem("tabletWallpaper");
     if (savedBg) setBgImage(savedBg);
 
-    // Recuperar configuración del cursor
     const savedCursor = localStorage.getItem("tabletCursorSettings");
     if (savedCursor) setCursorSettings(JSON.parse(savedCursor));
   }, []);
@@ -89,7 +89,6 @@ export default function TabletHome() {
     toast.success("Wallpaper actualizado", { theme: "dark", autoClose: 1000 });
   };
 
-  // Función para guardar los ajustes del cursor
   const handleUpdateCursor = (newSettings) => {
     setCursorSettings(newSettings);
     localStorage.setItem("tabletCursorSettings", JSON.stringify(newSettings));
@@ -127,7 +126,6 @@ export default function TabletHome() {
   return (
     <div className="fixed inset-0 w-full h-full bg-gradient-to-tr from-orange-300 via-purple-300 to-blue-400 overflow-hidden select-none">
 
-      {/* CURSOR CUSTOMIZABLE INYECTADO */}
       <CustomCursor settings={cursorSettings} />
 
       <div className={`absolute inset-0 w-full h-full transition-all duration-700 bg-cover bg-center ${!bgImage ? 'bg-gradient-to-tr from-orange-300 via-purple-300 to-blue-400' : ''}`} style={bgImage ? { backgroundImage: `url(${bgImage})` } : {}} />
@@ -172,8 +170,8 @@ export default function TabletHome() {
             onClose={() => setOpenApp(null)}
             currentBg={bgImage}
             onSelectWallpaper={handleSelectWallpaper}
-            cursorSettings={cursorSettings}             // <--- Pasamos config al modal
-            onUpdateCursor={handleUpdateCursor}         // <--- Pasamos actualizador al modal
+            cursorSettings={cursorSettings}
+            onUpdateCursor={handleUpdateCursor}
           />
         )}
         {openApp === 'calendar' && (
@@ -192,9 +190,22 @@ export default function TabletHome() {
         )}
       </AnimatePresence>
 
+      {/* DOCK ACTUALIZADO */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/60 rounded-3xl px-8 py-3 flex gap-6 shadow-2xl backdrop-blur-md z-40 border border-white/40">
         {dockApps.map((app) => (
-          <div key={app.id} onClick={() => setOpenApp(app.id)} className="w-14 h-14 bg-white rounded-xl shadow flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+          <div
+            key={app.id}
+            onClick={() => {
+              // Si apretas el candado, llamamos a la función de bloquear
+              if (app.id === 'lock') {
+                onLock();
+              } else {
+                setOpenApp(app.id);
+              }
+            }}
+            className="w-14 h-14 bg-white rounded-xl shadow flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
+            title={app.name} // <--- Te agregué el título para que aparezca el tooltip al hacer hover
+          >
             {app.icon}
           </div>
         ))}
